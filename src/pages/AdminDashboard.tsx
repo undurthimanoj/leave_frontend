@@ -115,7 +115,7 @@ export const AdminDashboard: React.FC = () => {
 
   const updateStatus = async (id: string, newStatus: string) => {
     try {
-      await fetch(`http://localhost:5000/api/leave-applications/${id}`, {
+      await fetch(`https://leave-backend-1.onrender.com/api/leave-applications/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
