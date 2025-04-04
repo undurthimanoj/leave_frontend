@@ -32,7 +32,7 @@ export function LeaveForm() {
     try {
       console.log("Submitting form data:", formData);
       
-      const response = await fetch("https://leave-backend.vercel.app/submit-application", {
+      const response = await fetch("https://leave-backend-1.onrender.com/submit-application", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
