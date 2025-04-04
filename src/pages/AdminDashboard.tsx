@@ -98,7 +98,7 @@ export const AdminDashboard: React.FC = () => {
     const fetchApplications = async () => {
       setLoading(true);
       try {
-        const response = await fetch("http://localhost:5000/api/leave-applications");
+        const response = await fetch("https://leave-backend-1.onrender.com/api/leave-applications");
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
