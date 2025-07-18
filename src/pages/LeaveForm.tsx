@@ -1,4 +1,3 @@
-You said:
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,7 +23,7 @@ export function LeaveForm() {
     // Validate form data
     for (const [key, value] of Object.entries(formData)) {
       if (!value.trim()) {
-        setErrorMessage(Please fill in the ${key} field);
+        setErrorMessage(`Please fill in the ${key} field`);
         setIsSubmitting(false);
         return;
       }
@@ -56,7 +55,7 @@ export function LeaveForm() {
         });
         navigate('/success');
       } else {
-        setErrorMessage(Failed to submit application: ${responseData.message || 'Unknown error'});
+        setErrorMessage(`Failed to submit application: ${responseData.message || 'Unknown error'}`);
         console.error("Server response:", responseData);
       }
     } catch (error) {
@@ -164,9 +163,9 @@ export function LeaveForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+            className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
               isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500}
+            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
           >
             {isSubmitting ? 'Submitting...' : 'Submit Application'}
           </button>
@@ -174,4 +173,4 @@ export function LeaveForm() {
       </div>
     </div>
   );
-}    
+}
