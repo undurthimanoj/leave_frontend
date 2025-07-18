@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 interface LeaveApplication {
   _id: string;
-  name: string;
+  name: string;  
   email: string;
   course: string;
   subject: string;
