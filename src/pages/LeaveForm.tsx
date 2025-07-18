@@ -33,6 +33,13 @@ export function LeaveForm() {
       }
     }
 
+    // ✅ Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setErrorMessage("Please enter a valid email address");
+      return;
+    }
+
     // ✅ Show success immediately (optimistic UI)
     alert("✅ Application submitted successfully!");
     setFormData({
@@ -56,13 +63,18 @@ export function LeaveForm() {
         console.log("✅ Data sent to backend successfully");
       } catch (error) {
         console.error("⚠️ Background submission error:", error);
-        // optional: store formData in localStorage to retry later
       }
     })();
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center px-4 py-8">
+    <div
+      className="min-h-screen flex items-center justify-center px-4 py-8 bg-cover bg-center"
+      style={{
+        backgroundImage:
+          "url('https://cdn.zeebiz.com/sites/default/files/2023/01/26/223591-india-flag-g51ff8ba971920.jpg')",
+      }}
+    >
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8 transition-transform transform hover:scale-[1.01]">
         <h2 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
           Leave Application Form
