@@ -17,7 +17,6 @@ interface AdminCredentials {
 }
 
 export const AdminDashboard: React.FC = () => {
-  // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [credentials, setCredentials] = useState<AdminCredentials>({
     username: "",
@@ -25,7 +24,6 @@ export const AdminDashboard: React.FC = () => {
   });
   const [authError, setAuthError] = useState<string>("");
 
-  // Application state
   const [applications, setApplications] = useState<LeaveApplication[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
@@ -34,7 +32,6 @@ export const AdminDashboard: React.FC = () => {
   const [customDate, setCustomDate] = useState<string>("");
   const [selectedApplication, setSelectedApplication] = useState<LeaveApplication | null>(null);
 
-  // Handle authentication input changes
   const handleAuthInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCredentials((prev) => ({
@@ -43,58 +40,34 @@ export const AdminDashboard: React.FC = () => {
     }));
   };
 
-  // Handle sign-in form submission
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError("");
-
     try {
-      // Mock authentication with custom credentials
       if (credentials.username === "leaveletter" && credentials.password === "leaveletter@2025") {
         setIsAuthenticated(true);
         localStorage.setItem("adminAuth", "true");
       } else {
         throw new Error("Invalid credentials");
       }
-
-      // Comment out the API call since we're using mock authentication
-      // const response = await fetch("http://localhost:5000/api/admin/login", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(credentials),
-      // });
-      // 
-      // if (!response.ok) {
-      //   throw new Error("Invalid credentials");
-      // }
-      // setIsAuthenticated(true);
-      // localStorage.setItem("adminAuth", "true");
     } catch (err) {
       setAuthError((err as Error).message);
     }
   };
 
-  // Handle sign out with page refresh
   const handleSignOut = () => {
     setIsAuthenticated(false);
     localStorage.removeItem("adminAuth");
-    // Add page refresh after sign out
     window.location.reload();
   };
 
-  // Check for existing authentication
   useEffect(() => {
-    const checkAuth = () => {
-      const isAuth = localStorage.getItem("adminAuth") === "true";
-      setIsAuthenticated(isAuth);
-    };
-    checkAuth();
+    const isAuth = localStorage.getItem("adminAuth") === "true";
+    setIsAuthenticated(isAuth);
   }, []);
 
-  // Fetch applications data when authenticated
   useEffect(() => {
     if (!isAuthenticated) return;
-
     const fetchApplications = async () => {
       setLoading(true);
       try {
@@ -103,7 +76,8 @@ export const AdminDashboard: React.FC = () => {
           throw new Error("Failed to fetch data");
         }
         const data: LeaveApplication[] = await response.json();
-        setApplications(data);
+        // 🔥 reverse so newest comes first
+        setApplications(data.reverse());
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -128,10 +102,27 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  // 🔥 handle delete
+  const handleDelete = async (id: string) => {
+    try {
+      const confirmed = window.confirm("Are you sure you want to delete this application?");
+      if (!confirmed) return;
+      const res = await fetch(`https://leave-backend-1.onrender.com/api/leave-applications/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setApplications((prev) => prev.filter((app) => app._id !== id));
+      } else {
+        console.error("Delete failed");
+      }
+    } catch (err) {
+      console.error("Error deleting application:", err);
+    }
+  };
+
   const filterByDate = (date: string) => {
     const today = new Date();
     const applicationDate = new Date(date);
-
     if (dateFilter === "Today") return applicationDate.toDateString() === today.toDateString();
     if (dateFilter === "This Week") {
       const weekStart = new Date();
@@ -153,7 +144,6 @@ export const AdminDashboard: React.FC = () => {
       filterByDate(app.date)
   );
 
-  // Render sign-in form if not authenticated
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -203,7 +193,6 @@ export const AdminDashboard: React.FC = () => {
     );
   }
 
-  // Render dashboard if authenticated
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-6xl mx-auto">
@@ -303,7 +292,14 @@ export const AdminDashboard: React.FC = () => {
                         className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-700"
                         onClick={() => setSelectedApplication(app)}
                       >
-                        View Details
+                        View
+                      </button>
+                      {/* 🔥 delete button */}
+                      <button
+                        className="bg-gray-800 text-white px-3 py-1 rounded-md hover:bg-black"
+                        onClick={() => handleDelete(app._id)}
+                      >
+                        Delete
                       </button>
                     </td>
                   </tr>
